@@ -1,0 +1,22 @@
+language: python
+dist: xenial
+
+cache:
+  directories:
+  - "$HOME/.cache/pip"
+
+python:
+- "3.7"
+
+install:
+- pip install 'tox-travis >= 0.12'
+
+script: tox
+
+jobs:
+  include:
+  - { env: [TOXENV=docs], stage: Docs and linting }
+  - { env: [TOXENV=lint] }
+  - { env: [TOXENV=django20-tests], stage: Unit tests }
+  - { env: [TOXENV=django21-tests] }
+  - { env: [TOXENV=django22-coverage-report], stage: Test coverage }
