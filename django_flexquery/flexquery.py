@@ -9,8 +9,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Manager as _Manager, QuerySet as _QuerySet
 from django.utils.decorators import classonlymethod
 
-from .q import Q
-
 
 class FlexQueryType(type):
     """
@@ -18,20 +16,15 @@ class FlexQueryType(type):
     """
 
     def __get__(cls, instance, owner):
-        if issubclass(cls, InitializedFlexQueryMixin) and isinstance(
-            instance, (_Manager, _QuerySet)
-        ):
+        if cls.func is not None and isinstance(instance, (_Manager, _QuerySet)):
             # Return a new FlexQuery instance bound to the holding object
             return cls(instance)
         # Otherwise, preserve the FlexQuery type
         return cls
 
     def __repr__(cls):
-        if cls.q_func is not None or cls.qs_func is not None:
-            return "<type %s %r>" % (
-                cls.__name__,
-                (cls.qs_func if cls.q_func is None else cls.q_func).__name__,
-            )
+        if cls.func is not None:
+            return "<type %s %r>" % (cls.__name__, cls.func.__name__)
         return super().__repr__()
 
 
@@ -48,35 +41,28 @@ class FlexQuery(metaclass=FlexQueryType):
     .. automethod:: __call__
     """
 
-    # pylint: disable=not-callable
-
-    # Will be set when creating sub-types
-    q_func = None
-    qs_func = None
+    # Will be set on sub-types
+    func = None
 
     def __call__(self, *args, **kwargs):
-        """Filters the base QuerySet using the provided function.
-
-        All arguments are passed through to the FlexQuery's custom function.
+        """Filters the base QuerySet using the provided function, relaying arguments.
 
         :returns QuerySet:
         """
-        if self.q_func is None:
-            return self.qs_func(self.base.all(), *args, **kwargs)
-        return self.base.filter(self.q_func(*args, **kwargs))
+        return self.base.filter(self.call_bound(*args, **kwargs))
 
     def __init__(self, base):
         """Binds a FlexQuery instance to the given base to perform its filtering on.
 
         :param base: instance to use as base for filtering
-        :type  base: Manager, QuerySet
+        :type  base: Manager | QuerySet
         :raises ImproperlyConfigured:
-            if this FlexQuery type wasn't created by one of the from_*() classmethods
+            if this FlexQuery type wasn't created by the from_q() classmethod
         :raises TypeError: if base is of unsupported type
         """
-        if self.q_func is None and self.qs_func is None:
+        if self.func is None:
             raise ImproperlyConfigured(
-                "Use one of the from_*() classmethods to create a FlexQuery type."
+                "Use the from_q() classmethod to create a FlexQuery sub-type."
             )
         if not isinstance(base, (_Manager, _QuerySet)):
             raise TypeError(
@@ -88,78 +74,37 @@ class FlexQuery(metaclass=FlexQueryType):
     def __repr__(self):
         return "<%s %r, bound to %r>" % (
             self.__class__.__name__,
-            (self.qs_func if self.q_func is None else self.q_func).__name__,
+            self.func.__name__,
             self.base,
         )
 
     def as_q(self, *args, **kwargs):
-        """Returns a Q object representing the custom filters.
-
-        The Q object is either retrieved from the configured Q function or, if a
-        QuerySet filtering function was provided instead, will contain a sub-query
-        ensuring the object is in the base QuerySet filtered by that function.
-
-        All arguments are passed through to the FlexQuery's custom function.
+        """Returns the result of the configured function, relaying arguments.
 
         :returns Q:
         """
-        if self.q_func is None:
-            return Q(pk__in=self.qs_func(self.base.all(), *args, **kwargs))
-        return self.q_func(*args, **kwargs)
+        return self.call_bound(*args, **kwargs)
+
+    def call_bound(self, *args, **kwargs):
+        """Calls the provided Q function with self.base.all() as first argument.
+
+        This may be overloaded if arguments need to be preprocessed in some way
+        before being passed to the custom function.
+
+        :returns Q:
+        """
+        # pylint: disable=not-callable
+        return self.func(self.base.all(), *args, **kwargs)
 
     @classonlymethod
     def from_q(cls, func):
         """Creates a FlexQuery type from a Q function.
 
-        :param func: callable returning a Q object
+        :param func: callable taking a base QuerySet and returning a Q object
         :type  func: callable
         :returns FlexQueryType:
         """
-        return type(cls)(
-            "%sFromQFunction" % cls.__name__,
-            (InitializedFlexQueryMixin, cls),
-            {"q_func": staticmethod(func)},
-        )
-
-    @classonlymethod
-    def from_queryset(cls, func):
-        """Creates a FlexQuery type from a queryset filtering function.
-
-        :param func:
-            callable taking a QuerySet as first positional argument, applying some
-            filtering on it and returning it back
-        :type  func: callable
-        :returns FlexQueryType:
-        """
-        return type(cls)(
-            "%sFromQuerySetFunction" % cls.__name__,
-            (InitializedFlexQueryMixin, cls),
-            {"qs_func": staticmethod(func)},
-        )
-
-
-class InitializedFlexQueryMixin:
-    """
-    Mixin that prevents further usage of the from_*() classmethods on sub-types
-    of FlexQuery.
-    """
-
-    # pylint: disable=missing-docstring,unused-argument
-
-    @classonlymethod
-    def _already_initialized(cls):
-        raise NotImplementedError(
-            "%r was already initialized with a function. Use FlexQuery.from_*() "
-            "directly to derive new FlexQuery types." % cls
-        )
-
-    @classonlymethod
-    def from_q(cls, func):
-        cls._already_initialized()
-
-    @classonlymethod
-    def from_queryset(cls, func):
-        cls._already_initialized()
+        return type(cls)(cls.__name__, (cls,), {"func": staticmethod(func)})
 
 
 class Manager(_Manager):
