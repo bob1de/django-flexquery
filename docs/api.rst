@@ -5,8 +5,8 @@ API Documentation
    :members:
 
 
-``contrib.for_user``
---------------------
+``contrib.user_based``
+----------------------
 
-.. automodule:: django_flexquery.contrib.for_user
+.. automodule:: django_flexquery.contrib.user_based
    :members:

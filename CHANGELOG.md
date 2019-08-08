@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## 4.0.0 - Unreleased
+### Changed
+* Renamed `contrib.for_user` to `contrib.user_based`
+* Made the behavior of `UserBasedFlexQuery` when no user was given configurable
+
+
 ## 3.0.0 - 2019-08-08
 ### Added
 * Added `django_flexquery.contrib.for_user.ForUserFlexQuery`
