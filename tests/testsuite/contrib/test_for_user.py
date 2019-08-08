@@ -28,11 +28,11 @@ class ForUserFlexQueryTestCase(TestCase):
         self.assertEqual(self.man.fq(self.req).count(), 1)
 
     def test_request_no_user(self):
-        self.assertEqual(self.man.fq(self.req).count(), 2)
+        self.assertEqual(self.man.fq(self.req).count(), 0)
 
     def test_no_user_all(self):
+        self.man.fq.__class__.all_if_no_user = True
         self.assertEqual(self.man.fq(None).count(), 2)
 
     def test_no_user_none(self):
-        self.man.fq.__class__.none_if_no_user = True
         self.assertEqual(self.man.fq(None).count(), 0)
