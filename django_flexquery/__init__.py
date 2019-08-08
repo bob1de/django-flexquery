@@ -12,4 +12,4 @@ else:
     __all__ = ["FlexQuery", "Manager", "Q", "QuerySet"]
 
 
-__version__ = "2.0.0"
+__version__ = "3.0.0"
