@@ -107,3 +107,10 @@ in their own filtering code, without needing sub-queries. Think of something lik
         @FlexQuery.from_func
         def having_ripe_apples(base):
             return Q(kind="apple") & Fruid.objects.large.as_q().prefix("fruits")
+
+
+The ``contrib`` package
+-----------------------
+
+In ``django_flexquery.contrib`` you can find some common implementations of and
+helpers using the types provided by django-flexquery. See the :doc:`api` for details.
