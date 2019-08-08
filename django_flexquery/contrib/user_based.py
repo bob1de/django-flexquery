@@ -21,9 +21,9 @@ class UserBasedFlexQuery(FlexQuery):
     ``no_user_behavior`` attribute, which may be set to one of the following constants
     defined on the ``UserBasedFlexQuery`` class:
 
-    * ``NUB_PASS``: let the custom function handle a ``user`` of ``None``
     * ``NUB_ALL``: don't restrict the queryset
     * ``NUB_NONE``: restrict to the empty queryset (default)
+    * ``NUB_PASS``: let the custom function handle a ``user`` of ``None``
 
     Because it can handle an ``HttpRequest`` directly, instances of this ``FlexQuery``
     may also be used in conjunction with the django_filters library as the ``queryset``
