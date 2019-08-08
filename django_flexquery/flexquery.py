@@ -3,6 +3,7 @@ This module provides a convenient way to declare custom filtering logic with Dja
 model managers in a reusable fashion using Q objects.
 """
 
+import functools
 import inspect
 
 from django.db.models import Manager as _Manager, QuerySet as _QuerySet
@@ -72,21 +73,29 @@ class FlexQuery:
         return self.func(self.base.all(), *args, **kwargs)
 
     @classonlymethod
-    def from_func(cls, func):
+    def from_func(cls, func=None, **attrs):
         """Creates a ``FlexQuery`` sub-type from a function.
+
+        This classmethod can be used as decorator. As long as ``func`` is ``None``,
+        a ``functools.partial`` with the given keyword arguments is returned.
 
         :param func: function taking a base ``QuerySet`` and returning a ``Q`` object
         :type  func: function
-        :returns FlexQueryType:
+        :param attrs: additional attributes to set on the newly created type
+        :returns FlexQueryType | functools.partial:
         :raises TypeError: if ``func`` is no function
         """
+        if func is None:
+            return functools.partial(cls.from_func, **attrs)
+
         if not inspect.isfunction(func):
             raise TypeError(
                 "Can only create FlexQuery from function, but %s was given."
                 % func.__class__.__name__
             )
+
         return InitializedFlexQueryType(
-            cls.__name__, (cls,), {"func": staticmethod(func)}
+            cls.__name__, (cls,), {**attrs, "func": staticmethod(func)}
         )
 
 

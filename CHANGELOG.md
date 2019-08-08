@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## 4.0.0 - Unreleased
+### Added
+* `FlexQuery.from_func` can now set additional attributes on the newly created type
 ### Changed
 * Renamed `contrib.for_user` to `contrib.user_based`
 * Made the behavior of `UserBasedFlexQuery` when no user was given configurable

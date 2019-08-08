@@ -32,6 +32,13 @@ class FlexQueryTestCase(TestCase):
         with self.assertRaises(TypeError):
             FlexQuery.from_func("foo")
 
+    def test_additional_attr(self):
+        @FlexQuery.from_func(some="value")
+        def dummy(base):
+            pass
+
+        self.assertEqual(dummy.some, "value")
+
     # Invalid initialization
 
     def test_invalid_base(self):
