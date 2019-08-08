@@ -5,7 +5,7 @@ from django_flexquery import *
 
 q_func = lambda self: Q(a=42)
 
-fq = FlexQuery.from_q(q_func)
+fq = FlexQuery.from_func(q_func)
 
 
 class QS(QuerySet):

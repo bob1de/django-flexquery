@@ -43,7 +43,7 @@ The ``FlexQuery`` class provides a decorator for functions declared on a custom
         # base is a copy of the base QuerySet instance. It's not needed most of
         # the time unless you want to embed a sub-query based on the current QuerySet
         # into the Q object.
-        @FlexQuery.from_q
+        @FlexQuery.from_func
         def large(base):
             return Q(size__gte=10)
 
@@ -104,6 +104,6 @@ generated Q object and prefix it with the related field's name in order to reuse
 in their own filtering code, without needing sub-queries. Think of something like::
 
     class TreeQuerySet(QuerySet):
-        @FlexQuery.from_q
-        def having_ripe_apples():
+        @FlexQuery.from_func
+        def having_ripe_apples(base):
             return Q(kind="apple") & Fruid.objects.large.as_q().prefix("fruits")

@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
-
 from django_flexquery import *
+from django_flexquery.flexquery import InitializedFlexQueryType
 from django_flexquery_tests.models import *
 
 
@@ -23,20 +23,20 @@ class FlexQueryTestCase(TestCase):
 
     # Sub-type creation
 
-    def test_from_q(self):
-        self.assertTrue(isinstance(fq, type(FlexQuery)))
+    def test_subtyping(self):
+        self.assertTrue(isinstance(fq, InitializedFlexQueryType))
         self.assertTrue(issubclass(fq, FlexQuery))
         self.assertIs(fq.func, q_func)
+
+    def test_invalid_func(self):
+        with self.assertRaises(TypeError):
+            FlexQuery.from_func("foo")
 
     # Invalid initialization
 
     def test_invalid_base(self):
         with self.assertRaises(TypeError):
             fq(object)
-
-    def test_initialize_supertype(self):
-        with self.assertRaises(ImproperlyConfigured):
-            FlexQuery(AModel.objects)
 
     # Access FlexQuery type as attribute
 

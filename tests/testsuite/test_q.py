@@ -1,5 +1,4 @@
 from django.test import SimpleTestCase
-
 from django_flexquery import Q
 
 

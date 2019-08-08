@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory, TestCase
-
 from django_flexquery import *
 from django_flexquery.contrib.for_user import *
 from django_flexquery_tests.models import *
@@ -9,7 +8,7 @@ from django_flexquery_tests.models import *
 class ForUserFlexQueryTestCase(TestCase):
     def setUp(self):
         class Man(Manager):
-            @ForUserFlexQuery.from_q
+            @ForUserFlexQuery.from_func
             def fq(base, user):
                 assert isinstance(user, AnonymousUser)
                 return Q(a=42)
