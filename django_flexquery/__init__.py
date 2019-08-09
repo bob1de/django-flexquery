@@ -3,8 +3,8 @@ Reusable QuerySet filtering logic for Django.
 """
 
 try:
-    from .flexquery import Manager, FlexQuery, QuerySet
-    from .q import Q
+    from .flexquery import *
+    from .q import *
 except ImportError:  # pragma: no cover
     # Django is missing, just provide version
     __all__ = []

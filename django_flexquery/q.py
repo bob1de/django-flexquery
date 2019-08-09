@@ -6,6 +6,9 @@ from django.db.models import Q as _Q
 from django.db.models.constants import LOOKUP_SEP
 
 
+__all__ = ["Q"]
+
+
 class Q(_Q):  # pylint: disable=invalid-name
     """
     A custom Q implementation that allows prefixing existing Q objects with some

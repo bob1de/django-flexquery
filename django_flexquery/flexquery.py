@@ -10,6 +10,9 @@ from django.db.models import Manager as _Manager, QuerySet as _QuerySet
 from django.utils.decorators import classonlymethod
 
 
+__all__ = ["FlexQuery", "Manager", "QuerySet"]
+
+
 class FlexQuery:
     """
     Flexibly provides model-specific query constraints as an attribute of Manager
@@ -80,9 +83,9 @@ class FlexQuery:
         a ``functools.partial`` with the given keyword arguments is returned.
 
         :param func: function taking a base ``QuerySet`` and returning a ``Q`` object
-        :type  func: function
+        :type  func: function | None
         :param attrs: additional attributes to set on the newly created type
-        :returns FlexQueryType | functools.partial:
+        :returns InitializedFlexQueryType | functools.partial:
         :raises TypeError: if ``func`` is no function
         """
         if func is None:
