@@ -2,11 +2,13 @@ django-flexquery
 ================
 
 .. toctree::
+   :glob:
    :hidden:
 
    Introduction <self>
-   usage
-   api
+   q
+   flexquery
+   contrib/*
 
 This library aims to provide a new way of declaring reusable QuerySet filtering
 logic in your Django project, incorporating the DRY principle and maximizing user
@@ -30,8 +32,6 @@ query and how the database engine in use optimizes it. In many cases, it will ha
 make a noticeable difference at all. However, when the amount of data grows, doing
 queries right can save you and the users of your application several seconds, and
 that is what django-flexquery is for.
-
-Have a look at the :doc:`usage` and :doc:`api` to get an idea of how it works.
 
 
 Requirements
