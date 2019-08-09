@@ -19,7 +19,7 @@ Its strengths are, among others:
 
 * Easy to learn in minutes
 * Cleanly integrates with Django's ORM
-* Small code footprint, less bugs - ~150 lines of code (LoC)
+* Small code footprint, hard for bugs to hide - ~150 lines of code (LoC)
 * 100% test coverage
 * Fully documented code, formatted using the excellent `Black Code Formatter
   <https://github.com/python/black>`_.
