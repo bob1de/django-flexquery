@@ -45,7 +45,7 @@ Installation
 
 ::
 
-    pip install 'git+git://github.com/efficiosoft/django-flexquery#master'
+    pip install django-flexquery
 
 No changes to your Django settings are required; no ``INSTALLED_APPS``, no
 ``MIDDLEWARE_CLASSES``.
