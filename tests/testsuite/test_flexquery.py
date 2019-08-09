@@ -55,16 +55,13 @@ class FlexQueryTestCase(TestCase):
 
     # __repr__()
 
-    def test_supertype_repr(self):
-        self.assertEqual(repr(FlexQuery), type.__repr__(FlexQuery))
-
     def test_subtype_repr(self):
-        self.assertEqual(repr(fq), r"<type FlexQuery %r>" % q_func.__name__)
+        self.assertEqual(repr(fq), "<type FlexQuery %r>" % q_func.__name__)
 
     def test_object_repr(self):
         self.assertEqual(
             repr(AModel.objects.fq),
-            r"<FlexQuery %r, bound to %r>" % (q_func.__name__, AModel.objects),
+            "<FlexQuery %r, bound to %r>" % (q_func.__name__, AModel.objects),
         )
 
     # FlexQuery.__call__()
