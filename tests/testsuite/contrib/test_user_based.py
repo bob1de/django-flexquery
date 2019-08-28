@@ -5,6 +5,10 @@ from django_flexquery.contrib.user_based import *
 from django_flexquery_tests.models import *
 
 
+class UserIsAnonymous(Exception):
+    pass
+
+
 class UserIsNone(Exception):
     pass
 
@@ -16,7 +20,8 @@ class UserBasedFlexQueryTestCase(TestCase):
             def fq(base, user):
                 if user is None:
                     raise UserIsNone
-                assert isinstance(user, AnonymousUser)
+                if isinstance(user, AnonymousUser):
+                    raise UserIsAnonymous
                 return Q(a=42)
 
         self.man = Man()
@@ -27,10 +32,10 @@ class UserBasedFlexQueryTestCase(TestCase):
         AModel.objects.create(a=42)
 
     def test_user(self):
-        self.assertEqual(self.man.fq(AnonymousUser()).count(), 1)
+        self.assertEqual(self.man.fq(object).count(), 1)
 
     def test_request(self):
-        self.req.user = AnonymousUser()
+        self.req.user = object()
         self.assertEqual(self.man.fq(self.req).count(), 1)
 
     def test_request_no_user(self):
@@ -47,3 +52,10 @@ class UserBasedFlexQueryTestCase(TestCase):
         self.man.fq.__class__.no_user_behavior = UserBasedFlexQuery.NUB_PASS
         with self.assertRaises(UserIsNone):
             self.man.fq(None)
+
+    def test_anonymous_user(self):
+        self.req.user = AnonymousUser()
+        with self.assertRaises(UserIsAnonymous):
+            self.man.fq(self.req)
+        self.man.fq.__class__.pass_anonymous_user = False
+        self.assertEqual(self.man.fq(self.req).count(), 0)

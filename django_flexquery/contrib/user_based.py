@@ -25,6 +25,10 @@ class UserBasedFlexQuery(FlexQuery):
     * ``NUB_NONE``: restrict to the empty queryset (default)
     * ``NUB_PASS``: let the custom function handle a ``user`` of ``None``
 
+    If the ``pass_anonymous_user`` attribute is changed to ``False``,
+    ``django.contrib.auth.models.AnonymousUser`` objects are treated as if they were
+    ``None`` and the configured no-user behavior comes to play.
+
     Because it can handle an ``HttpRequest`` directly, instances of this ``FlexQuery``
     may also be used in conjunction with the django_filters library as the ``queryset``
     parameter of filters.
@@ -35,6 +39,8 @@ class UserBasedFlexQuery(FlexQuery):
     NUB_PASS = 2
     no_user_behavior = NUB_NONE
 
+    pass_anonymous_user = True
+
     def call_bound(self, user, *args, **kwargs):  # pylint: disable=arguments-differ
         """Calls the custom function with a user, followed by the remaining arguments.
 
@@ -42,9 +48,13 @@ class UserBasedFlexQuery(FlexQuery):
         :type  user: django.contrib.auth.models.User | django.http.HttpRequest | None
         :returns Q:
         """
+        from django.contrib.auth.models import AnonymousUser
+
         try:
             user = user.user if isinstance(user, HttpRequest) else user
         except AttributeError:
+            user = None
+        if not self.pass_anonymous_user and isinstance(user, AnonymousUser):
             user = None
         if user is None:
             if self.no_user_behavior == self.NUB_ALL:
