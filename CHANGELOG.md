@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## 4.2.0 - 2020-03-29
+### Added
+*  Added Django 3.0 compatibility.
+### Removed
+*  Removed Django 2.0 and 2.1 compatibility. These are EOL.
+
+
 ## 4.1.0 - 2019-08-28
 ### Added
 * `UserBasedFlexQuery` can now be configured to handle anonymous users like no user.
