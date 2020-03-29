@@ -15,5 +15,5 @@ setup(
     url="https://github.com/efficiosoft/django-flexquery",
     license="MIT License",
     packages=find_packages("."),
-    install_requires=("django ~= 2.0",),
+    install_requires=("django >= 2.2, < 3.1",),
 )

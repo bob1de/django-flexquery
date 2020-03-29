@@ -37,7 +37,7 @@ that is what django-flexquery is for.
 Requirements
 ------------
 
-Continuous integration ensures compatibility with Python 3.7 + Django 2.0, 2.1 and 2.2.
+Continuous integration ensures compatibility with Python 3.7 + Django 2.2 and 3.0.
 
 
 Installation
